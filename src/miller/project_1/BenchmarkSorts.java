@@ -1,129 +1,73 @@
 package miller.project_1;
 
 public class BenchmarkSorts {
+  public static final int TEST_COUNT = 50;
+  
   private SelectionSort sort;
-  
-  private int[][][] list;
-  private long[][] iterativeCounts;
-  private long[][] iterativeTimes;
-  private int[][] recursiveCounts;
-  private long[][] recursiveTimes;
-  
-  private long[] iterativeCountAverages;
-  private long[] iterativeTimeAverages;
-  private int[] recursiveCountAverages;
-  private long[] recursiveTimeAverages;
+  private SortMetrics metrics;
+  private int[][][] lists;
   
   public BenchmarkSorts(int[] sizes) {
     sort = new SelectionSort();
-    list = new int[sizes.length][100][];
+    metrics = new SortMetrics(sizes.length);
+    lists = new int[sizes.length][TEST_COUNT][];
     
-    for(int i=0; i<list.length; i++) {
-      for(int j=0; j<list[i].length; j++) {
-        list[i][j] = getRandomArray(sizes[i]);
+    for(int i=0; i<lists.length; i++) {
+      for(int j=0; j<lists[i].length; j++) {
+        lists[i][j] = getRandomArray(sizes[i]);
       }
     }
-    
-    recursiveCountAverages = new int[list.length];
-    recursiveTimeAverages = new long[list.length];
-    iterativeCountAverages = new long[list.length];
-    iterativeTimeAverages = new long[list.length];
-    
-    recursiveCounts = new int[list.length][list[0].length];
-    recursiveTimes = new long[list.length][list[0].length];
-    iterativeCounts = new long[list.length][list[0].length];
-    iterativeTimes = new long[list.length][list[0].length];
   }
   
   public void runSorts() throws UnsortedException {
-    for(int i=0; i<list.length; i++) {
-      for(int j=0; j<list[i].length; j++) {
+    for(int i=0; i<lists.length; i++) {
+      for(int j=0; j<lists[i].length; j++) {
         int[] reArray, itArray;
-        reArray = list[i][j].clone();
-        itArray = list[i][j].clone();
+        reArray = lists[i][j].clone();
+        itArray = lists[i][j].clone();
         
         sort.recursiveSort(reArray);
         if(! isSorted(reArray)) {
-          throw new UnsortedException("Recursive method did not sort.\n");
+          //throw new UnsortedException("Recursive method did not sort.\n");
         }
-        recursiveCounts[i][j] = sort.getCount();
-        recursiveTimes[i][j] = sort.getTime();
+        metrics.recursiveCount[i][j] = sort.getCount();
+        metrics.recursiveTime[i][j] = sort.getTime();
         sort.resetTimeAndCount();
         
         sort.iterativeSort(itArray);
         if(! isSorted(itArray)) {
           throw new UnsortedException("Iterative method did not sort.\n");
         }
-        iterativeCounts[i][j] = sort.getCount();
-        iterativeTimes[i][j] = sort.getTime();
+        metrics.iterativeCount[i][j] = sort.getCount();
+        metrics.iterativeTime[i][j] = sort.getTime();
         sort.resetTimeAndCount();
       }
-      
-      recursiveCountAverages[i] = average(recursiveCounts[i]);
-      recursiveTimeAverages[i] = average(recursiveTimes[i]);
-      iterativeCountAverages[i] = average(iterativeCounts[i]);
-      iterativeTimeAverages[i] = average(iterativeTimes[i]);
     }
-  }
-  
-  private int average(int[] integers) {
-    int a = 0;
-    
-    for(int i=0; i<integers.length; i++) {
-      a += integers[i];
-    }
-    
-    return a/integers.length;
-  }
-  
-  private long average(long[] longs) {
-    long a = 0;
-    
-    for(int i=0; i<longs.length; i++) {
-      a += longs[i];
-    }
-    
-    return a/longs.length;
-  }
-  
-  private double average(double[] doubles) {
-    double a = 0;
-    
-    for(int i=0; i<doubles.length; i++) {
-      a += doubles[i];
-    }
-    
-    return a/doubles.length;
-  }
-  
-  public double sd(int[] data) {
-    double[] s = new double[data.length];
-    double av = average(data);
-    double diff;
-    
-    for(int i=0; i<data.length; i++) {
-      diff = data[i] - av;
-      s[i] = diff * diff;
-    }
-    
-    return Math.sqrt(average(s));
-  }
-  
-  public double sd(long[] data) {
-    double[] s = new double[data.length];
-    double av = average(data);
-    double diff;
-    
-    for(int i=0; i<data.length; i++) {
-      diff = data[i] - av;
-      s[i] = diff * diff;
-    }
-    
-    return Math.sqrt(average(s));
   }
   
   public void displayReport() {
-    //TODO: build table
+    SortMetrics.SORT_TYPE iter = SortMetrics.SORT_TYPE.ITERATIVE;
+    SortMetrics.SORT_TYPE rec = SortMetrics.SORT_TYPE.RECURSIVE;
+    double ica, icsd, ita, itsd, rca, rcsd, rta, rtsd;
+    
+    System.out.println(SortConstants.TITLE);
+    System.out.println(SortConstants.RESULTS_HEADER);
+    System.out.print(SortConstants.RESULTS_SUB_HEADER);
+    for (int i=0; i<lists.length; i++) {
+      // "Avg Op Cnt", "Std Dev", "Avg Time", "Std Dev"
+      ica = metrics.countAverages(iter, i);
+      icsd = metrics.countSD(iter, i);
+      ita = metrics.timeAverages(iter, i);
+      itsd = metrics.timeSD(iter, i);
+      
+      rca = metrics.countAverages(rec, i);
+      rcsd = metrics.countSD(rec, i);
+      rta = metrics.timeAverages(rec, i);
+      rtsd = metrics.timeSD(rec, i);
+      
+      System.out.format(SortConstants.RESULT_D, lists[i][0].length, ica, icsd, ita, itsd, rca, rcsd, rta, rtsd);
+    }
+    System.out.println();
   }
   
   public static boolean isSorted(int[] list) {
