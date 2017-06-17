@@ -55,14 +55,14 @@ public class BenchmarkSorts {
     System.out.print(SortConstants.RESULTS_SUB_HEADER);
     for (int i=0; i<lists.length; i++) {
       // "Avg Op Cnt", "Std Dev", "Avg Time", "Std Dev"
-      ica = metrics.countAverages(iter, i);
+      ica = metrics.countAverage(iter, i);
       icsd = metrics.countSD(iter, i);
-      ita = metrics.timeAverages(iter, i);
+      ita = metrics.timeAverage(iter, i);
       itsd = metrics.timeSD(iter, i);
       
-      rca = metrics.countAverages(rec, i);
+      rca = metrics.countAverage(rec, i);
       rcsd = metrics.countSD(rec, i);
-      rta = metrics.timeAverages(rec, i);
+      rta = metrics.timeAverage(rec, i);
       rtsd = metrics.timeSD(rec, i);
       
       System.out.format(SortConstants.RESULT_D, lists[i][0].length, ica, icsd, ita, itsd, rca, rcsd, rta, rtsd);

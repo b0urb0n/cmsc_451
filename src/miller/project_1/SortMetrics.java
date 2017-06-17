@@ -17,7 +17,7 @@ public class SortMetrics {
     iterativeTime = new long[size][BenchmarkSorts.TEST_COUNT];
   }
   
-  public double countAverages(SORT_TYPE s, int index) {
+  public double countAverage(SORT_TYPE s, int index) {
     int[] arr;
     if (s == SORT_TYPE.ITERATIVE){
       arr = iterativeCount[index];
@@ -28,7 +28,7 @@ public class SortMetrics {
     return average(arr);
   }
   
-  public double timeAverages(SORT_TYPE s, int index) {
+  public double timeAverage(SORT_TYPE s, int index) {
     long[] arr;
     if (s == SORT_TYPE.ITERATIVE){
       arr = iterativeTime[index];
