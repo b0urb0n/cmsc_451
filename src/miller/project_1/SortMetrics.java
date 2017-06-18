@@ -7,19 +7,18 @@ public class SortMetrics {
   public long[][] iterativeTime;
   public long[][] recursiveTime;
 
-  public static enum SORT_TYPE {ITERATIVE, RECURSIVE};
+  public static enum SORT_TYPE { ITERATIVE, RECURSIVE };
   
   public SortMetrics(int size) {
     recursiveCount = new int[size][BenchmarkSorts.TEST_COUNT];
     iterativeCount = new int[size][BenchmarkSorts.TEST_COUNT];
-    
     recursiveTime = new long[size][BenchmarkSorts.TEST_COUNT];
     iterativeTime = new long[size][BenchmarkSorts.TEST_COUNT];
   }
   
   public double countAverage(SORT_TYPE s, int index) {
     int[] arr;
-    if (s == SORT_TYPE.ITERATIVE){
+    if (s == SORT_TYPE.ITERATIVE) {
       arr = iterativeCount[index];
     } else {
       arr = recursiveCount[index];
@@ -30,7 +29,7 @@ public class SortMetrics {
   
   public double timeAverage(SORT_TYPE s, int index) {
     long[] arr;
-    if (s == SORT_TYPE.ITERATIVE){
+    if (s == SORT_TYPE.ITERATIVE) {
       arr = iterativeTime[index];
     } else {
       arr = recursiveTime[index];
@@ -41,7 +40,7 @@ public class SortMetrics {
   
   public double countSD(SORT_TYPE s, int index) {
     int[] arr;
-    if (s == SORT_TYPE.ITERATIVE){
+    if (s == SORT_TYPE.ITERATIVE) {
       arr = iterativeCount[index];
     } else {
       arr = recursiveCount[index];
@@ -52,7 +51,7 @@ public class SortMetrics {
   
   public double timeSD(SORT_TYPE s, int index) {
     long[] arr;
-    if (s == SORT_TYPE.ITERATIVE){
+    if (s == SORT_TYPE.ITERATIVE) {
       arr = iterativeTime[index];
     } else {
       arr = recursiveTime[index];
@@ -60,7 +59,7 @@ public class SortMetrics {
 
     return standardDeviation(arr);
   }
-    
+  
   private static double standardDeviation(int[] data) {
     double[] sd = new double[BenchmarkSorts.TEST_COUNT];
     double av = average(data);

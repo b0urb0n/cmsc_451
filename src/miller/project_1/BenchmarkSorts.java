@@ -5,30 +5,30 @@ public class BenchmarkSorts {
   
   private SelectionSort sort;
   private SortMetrics metrics;
-  private int[][][] lists;
+  private int[][][] arrays; // arrays[size][n of 50][data]
   
   public BenchmarkSorts(int[] sizes) {
     sort = new SelectionSort();
     metrics = new SortMetrics(sizes.length);
-    lists = new int[sizes.length][TEST_COUNT][];
+    arrays = new int[sizes.length][TEST_COUNT][];
     
-    for(int i=0; i<lists.length; i++) {
-      for(int j=0; j<lists[i].length; j++) {
-        lists[i][j] = getRandomArray(sizes[i]);
+    for(int i=0; i<arrays.length; i++) {
+      for(int j=0; j<arrays[i].length; j++) {
+        arrays[i][j] = getRandomArray(sizes[i]);
       }
     }
   }
   
   public void runSorts() throws UnsortedException {
-    for(int i=0; i<lists.length; i++) {
-      for(int j=0; j<lists[i].length; j++) {
+    for(int i=0; i<arrays.length; i++) {
+      for(int j=0; j<arrays[i].length; j++) {
         int[] reArray, itArray;
-        reArray = lists[i][j].clone();
-        itArray = lists[i][j].clone();
+        reArray = arrays[i][j].clone();
+        itArray = arrays[i][j].clone();
         
         sort.recursiveSort(reArray);
         if(! isSorted(reArray)) {
-          //throw new UnsortedException("Recursive method did not sort.\n");
+          throw new UnsortedException("Recursive method did not sort.\n");
         }
         metrics.recursiveCount[i][j] = sort.getCount();
         metrics.recursiveTime[i][j] = sort.getTime();
@@ -48,42 +48,39 @@ public class BenchmarkSorts {
   public void displayReport() {
     SortMetrics.SORT_TYPE iter = SortMetrics.SORT_TYPE.ITERATIVE;
     SortMetrics.SORT_TYPE rec = SortMetrics.SORT_TYPE.RECURSIVE;
-    double ica, icsd, ita, itsd, rca, rcsd, rta, rtsd;
     
     System.out.println(SortConstants.TITLE);
     System.out.println(SortConstants.RESULTS_HEADER);
     System.out.print(SortConstants.RESULTS_SUB_HEADER);
-    for (int i=0; i<lists.length; i++) {
-      // "Avg Op Cnt", "Std Dev", "Avg Time", "Std Dev"
-      ica = metrics.countAverage(iter, i);
-      icsd = metrics.countSD(iter, i);
-      ita = metrics.timeAverage(iter, i);
-      itsd = metrics.timeSD(iter, i);
-      
-      rca = metrics.countAverage(rec, i);
-      rcsd = metrics.countSD(rec, i);
-      rta = metrics.timeAverage(rec, i);
-      rtsd = metrics.timeSD(rec, i);
-      
-      System.out.format(SortConstants.RESULT_D, lists[i][0].length, ica, icsd, ita, itsd, rca, rcsd, rta, rtsd);
+    
+    for (int i=0; i<arrays.length; i++) {
+      System.out.format(SortConstants.RESULT_D, arrays[i][0].length, 
+          metrics.countAverage(iter, i),
+          metrics.countSD(iter, i),
+          metrics.timeAverage(iter, i),
+          metrics.timeSD(iter, i),
+          metrics.countAverage(rec, i),
+          metrics.countSD(rec, i),
+          metrics.timeAverage(rec, i),
+          metrics.timeSD(rec, i));
     }
     System.out.println();
   }
   
   public static boolean isSorted(int[] list) {
-    for(int i=0; i<list.length-1; i++)
-      if(list[i] > list[i+1])
+    for(int i=0; i<list.length-1; i++) {
+      if(list[i] > list[i+1]) {
         return false;
+      }
+    }
     return true;
   }
 
   private int[] getRandomArray(int size) {
     int[] arr = new int[size];
-    
     for(int i=0; i<size; i++) {
       arr[i] = (int)(Math.random() * Integer.MAX_VALUE);
     }
-    
     return arr;
   }
 }

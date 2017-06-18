@@ -6,28 +6,27 @@ public class SelectionSort implements SortInterface {
   
   @Override
   public void recursiveSort(int[] arr) throws UnsortedException {
-    long startTime = System.currentTimeMillis();
+    long startTime = System.nanoTime();
 
     recursiveSort(arr, 0);
     
-    time = System.currentTimeMillis() - startTime;
+    time = System.nanoTime() - startTime;
   }
   
   public void recursiveSort(int[] arr, int index) {
-    if (index >= arr.length - 1){
+    if (index >= arr.length - 1) {
       return;
     }
-    int minIndex = index;
     
+    int minIndex = index;
     for (int i=index+1; i<arr.length; i++) {
+      count++; // critical op is finding the smallest
       if (arr[i] < arr[minIndex]) {
-        count++; // critical op is finding the smallest
         minIndex = i;
       }
     }
     
     int temp = arr[index];
-    
     arr[index] = arr[minIndex];
     arr[minIndex] = temp;
     
@@ -36,40 +35,41 @@ public class SelectionSort implements SortInterface {
 
   @Override
   public void iterativeSort(int[] arr) throws UnsortedException {
-    long startTime = System.currentTimeMillis();
+    long startTime = System.nanoTime();
 
     for (int i=0; i<arr.length-1; i++) {
       int currentMin = arr[i];
-      int currentMinI = i;
+      int currentMinIndex = i;
       
-      for (int j=i+1; j<arr.length; j++) { 
-        if (currentMin > arr[j]){
-          count++; // critical op is finding the smallest
+      for (int j=i+1; j<arr.length; j++) {
+        count++; // critical op is finding the smallest
+        if (currentMin > arr[j]) {
           currentMin = arr[j];
-          currentMinI = j;
+          currentMinIndex = j;
         }
-      } 
-      if (currentMinI != i) {
-        arr[currentMinI] = arr[i]; 
+      }
+      
+      if (currentMinIndex != i) {
+        arr[currentMinIndex] = arr[i]; 
         arr[i] = currentMin;
       }
     }
 
-    time = System.currentTimeMillis() - startTime;
+    time = System.nanoTime() - startTime;
   } 
 
   @Override
   public int getCount() {
-    return this.count;
+    return count;
   }
 
   @Override
   public long getTime() {
-    return this.time;
+    return time;
   }
   
   public void resetTimeAndCount() {
-    this.time = 0;
-    this.count = 0;
+    time = 0;
+    count = 0;
   }
 }
